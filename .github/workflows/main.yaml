@@ -16,9 +16,9 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  working_directory: "demo_app"
-  working_directory_android: "demo_app/android"
-  working_directory_ios: "demo_app/ios"
+  working_directory: "."
+  working_directory_android: "./android"
+  working_directory_ios: "./ios"
 
 jobs:
   lint-and-test:
@@ -37,7 +37,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.pub-cache
-          key: ${{ runner.os }}-pub-${{ hashFiles('${{ env.working_directory }}/**/pubspec.lock') }}
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
           restore-keys: |
             ${{ runner.os }}-pub-
 
