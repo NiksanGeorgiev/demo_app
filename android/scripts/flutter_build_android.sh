@@ -30,8 +30,6 @@ if [ "$current_version" == "$previous_version" ]; then
 
     # Update the pubspec.yaml file with the new version
     sed -i "s/^version: .*/version: $new_version/" pubspec.yaml
-
-    version_changed=true
 fi
 
 # Build the Flutter application.
