@@ -32,5 +32,5 @@ if [ "$current_version" == "$previous_version" ]; then
     sed -i "s/^version: .*/version: $new_version/" pubspec.yaml
 fi
 
-# # Build the Flutter application.
-# flutter build appbundle --release
+# Build the Flutter application.
+flutter build appbundle --release
