@@ -4,6 +4,12 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
+// Declares a variable to contain the dart-define.
+def dartDefines = [
+    APP_TITLE: '[DEV] Demo_app',
+    APP_ID: 'com.baseflow.demo_app.fastlane_test'
+];
+
 // This method facilitates the loading of environment variables from the .env file and --dart-define flags.
 // The variables from the .env file are loaded first, the values can be overridden by the --dart-define flags.
 def _loadEnvironmentVariables() {
@@ -15,27 +21,6 @@ def _loadEnvironmentVariables() {
             System.setProperty(key, value)
         }
     }
-
-    // Get environment variables from .env file
-    def envFile
-    if (System.getProperty('ENV_FILE') != null) {
-        envFile = file('../../' + System.getProperty('ENV_FILE'))
-    } else {
-        envFile = file('../../.env.dev')
-    }
-
-    if (envFile.canRead()) {
-        envFile.readLines().each { line ->
-            if (line.startsWith('#') || line.isEmpty()) return
-            def (key, value) = line.split('=')
-            System.setProperty(key, value)
-        }
-    } else {
-        throw new Exception("You are trying to run the app with the '"+ envFile +"' environmentfile, make sure the file exists")
-    }
-
-    assert System.getProperty('APP_ID') != null, "The APP_ID environment variable is not set. Please set it in the .env file or by using the --dart-define flag."
-    assert System.getProperty('APP_TITLE') != null, "The APP_TITLE environment variable is not set. Please set it in the .env file or by using the --dart-define flag."
 }
 
 _loadEnvironmentVariables()
@@ -66,7 +51,7 @@ _loadEnvironmentVariables()
     }
 
     android {
-        namespace System.getProperty('APP_ID')
+        namespace dartDefines.APP_ID
         compileSdkVersion 34 // flutter.compileSdkVersion
         ndkVersion "27.0.12077973" // flutter.ndkVersion
 
@@ -85,7 +70,7 @@ _loadEnvironmentVariables()
         }
 
         defaultConfig {
-            applicationId System.getProperty('APP_ID')
+            applicationId dartDefines.APP_ID
             dimension "default"
             applicationIdSuffix ""
             // You can update the following values to match your application needs.
