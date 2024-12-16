@@ -3,6 +3,10 @@ default_platform(:android)
 platform :android do
   desc "Deploy a new version to the Google Play Store"
   lane :deploy do
+
+    # Use a custom script to build the Flutter Android application.
+    sh("../scripts/flutter_build_android.sh")
+    
     upload_to_play_store(
       aab: "../build/app/outputs/bundle/release/app-release.aab",
       json_key: "../.secrets/google_play_api_key.json",
