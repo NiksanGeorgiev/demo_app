@@ -5,7 +5,7 @@ platform :android do
   lane :deploy do
 
     # Use a custom script to build the Flutter Android application.
-    sh("../scripts/flutter_build_android.sh")
+    sh("bash", "../scripts/flutter_build_android.sh")
     
     upload_to_play_store(
       aab: "../build/app/outputs/bundle/release/app-release.aab",
