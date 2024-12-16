@@ -10,6 +10,8 @@ on: workflow_dispatch
 #    paths:
 #      - 'scoop/**'
 #      - '.github/workflows/scoop_release_stg.yml'
+permissions:
+  contents: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -124,6 +126,7 @@ jobs:
 
       # Push changes to pubspec.yaml if version was changed
       - name: Commit and push changes to pubspec.yaml
+        uses: actions/checkout@v4
         run: |
           if git diff --name-only | grep -q 'pubspec.yaml'; then
             git config --global user.name "github-actions[bot]"
