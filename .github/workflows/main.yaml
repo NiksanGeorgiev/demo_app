@@ -120,4 +120,4 @@ jobs:
         # env:
         #   MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
         working-directory: ${{ env.working_directory_android }}
-        run: bundle exec fastlane andoid deploy
+        run: bundle exec fastlane android deploy
