@@ -44,6 +44,7 @@ _loadEnvironmentVariables()
         flutterVersionName = '1.0'
     }
 
+    println new File(".").absolutePath
     def keystoreProperties = new Properties()
     def keystorePropertiesFile = rootProject.file('../.secrets/key.properties')
     if (keystorePropertiesFile.exists()) {
