@@ -124,7 +124,7 @@ jobs:
         working-directory: ${{ env.working_directory_android }}
         run: bundle exec fastlane android deploy
 
-      # Push changes to pubspec.yaml if version was changed
+      # Commit changes to pubspec.yaml if version was changed
       - uses: actions/checkout@v4
       - name: Commit and push changes to pubspec.yaml
         working-directory: ${{ env.working_directory }}
@@ -134,5 +134,9 @@ jobs:
             git config --global user.email "github-actions[bot]@users.noreply.github.com"
             git add pubspec.yaml
             git commit -m "Bump version in pubspec.yaml"
-            git push
           fi
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          branch: main
