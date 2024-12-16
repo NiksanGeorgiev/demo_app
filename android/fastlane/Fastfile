@@ -14,5 +14,6 @@ platform :android do
       track: "internal",
       release_status: "draft"
       )
+      
   end
 end
