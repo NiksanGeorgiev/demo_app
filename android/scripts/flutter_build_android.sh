@@ -9,8 +9,6 @@ cd ../../
 # Make sure we work in a clean environment.
 flutter clean
 
-version_changed=false
-
 # Get the current version from pubspec.yaml
 current_version=$(grep '^version:' pubspec.yaml | awk '{print $2}')
 
@@ -35,10 +33,6 @@ if [ "$current_version" == "$previous_version" ]; then
 
     version_changed=true
 fi
-
-# Set the output variable for the workflow
-echo "::set-output name=version_changed::$version_changed"
-
 
 # Build the Flutter application.
 flutter build appbundle --release
