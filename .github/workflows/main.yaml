@@ -16,9 +16,9 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  working_directory: "demp_app"
-  working_directory_android: "demp_app/android"
-  working_directory_ios: "demp_app/ios"
+  working_directory: "demo_app"
+  working_directory_android: "demo_app/android"
+  working_directory_ios: "demo_app/ios"
 
 jobs:
   lint-and-test:
