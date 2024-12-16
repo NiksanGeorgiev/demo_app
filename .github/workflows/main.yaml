@@ -121,3 +121,12 @@ jobs:
         #   MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
         working-directory: ${{ env.working_directory_android }}
         run: bundle exec fastlane android deploy
+
+       - name: Commit and push changes
+        if: success() && steps.release-android.outputs.version_changed == 'true'
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add pubspec.yaml
+          git commit -m "Bump version in pubspec.yaml"
+          git push
