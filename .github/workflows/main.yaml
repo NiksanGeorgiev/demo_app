@@ -128,7 +128,7 @@ jobs:
       - name: Commit changes
         working-directory: ${{ env.working_directory }}
         run: |
-          chmod +x .github/scripts/commit_and_push.sh
+          chmod +x .github/scripts/commit_pubspec_changes.sh
           .github/scripts/commit_pubspec_changes.sh
 
       - name: Push changes
