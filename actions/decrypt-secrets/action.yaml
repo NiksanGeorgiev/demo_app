@@ -1,0 +1,42 @@
+name: "Decrypt secrets"
+description: Decrypts secrets used to connect to Apple App Store and Google Play Store APIs.
+inputs:
+  encrypted_android_keystore:
+    required: true
+  encrypted_android_key_properties:
+    required: true
+  encrypted_google_play_api_key:
+    required: true
+  # encrypted_apple_app_store_api_key:
+  #   required: true
+  passphrase:
+    description: Passphrase used to decrypt the secrets.
+    required: true
+  secrets_path:
+    description: Path to where the secrets will be stored.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Decrypt signing information
+      shell: bash
+      run: |
+        # Create a directory to store secrets
+        mkdir -p "${{ inputs.secrets_path }}"
+
+        # Decrypt the Keystore
+        echo "${{inputs.encrypted_android_keystore}}" > "${{ inputs.secrets_path }}/fastlane_keystore.asc"
+        gpg -d --passphrase "${{inputs.passphrase}}" --batch "${{ inputs.secrets_path }}/fastlane_keystore.asc" > "${{ inputs.secrets_path }}/fastlane_keystore.jks"
+
+        # Decrypt the key.properties file (used in android/app/build.gradle)
+        echo "${{inputs.encrypted_android_key_properties}}" > "${{ inputs.secrets_path }}/key.properties.asc"
+        gpg -d --passphrase "${{inputs.passphrase}}" --batch "${{ inputs.secrets_path }}/key.properties.asc" > "${{ inputs.secrets_path }}/key.properties"
+
+        # Decrypt the Google Play Store API key (used to connect to the Google Play API).
+        echo "${{inputs.encrypted_google_play_api_key}}" > "${{ inputs.secrets_path }}/google_play_api_key.asc"
+        gpg -d --passphrase "${{inputs.passphrase}}" --batch "${{ inputs.secrets_path }}/google_play_api_key.asc" >"${{ inputs.secrets_path }}/google_play_api_key.json"
+
+        # Decrypt the Apple App Store Connect API key (.p8 certificate, used to connect to the Apple App Store API).
+        # echo "${{inputs.encrypted_apple_app_store_api_key}}" > "${{ inputs.secrets_path }}/apple_app_store_connect_api_key.asc"
+        # gpg -d --passphrase "${{inputs.passphrase}}" --batch "${{ inputs.secrets_path }}/apple_app_store_connect_api_key.asc" > "${{ inputs.secrets_path }}/apple_app_store_connect_api_key.p8"

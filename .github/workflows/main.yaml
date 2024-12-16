@@ -1,1 +1,123 @@
 # Write a workflow to build and release appbundle to Play Store
+name: Release Android
+
+# For now only configure the Scoop release workflow to run when manually triggered.
+on: workflow_dispatch
+
+#on:
+#  push:
+#    branches: [ staging ]
+#    paths:
+#      - 'scoop/**'
+#      - '.github/workflows/scoop_release_stg.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  working_directory: "demp_app"
+  working_directory_android: "demp_app/android"
+  working_directory_ios: "demp_app/ios"
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1 # Use shallow clone for faster checkout
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          cache: true
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('${{ env.working_directory }}/**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+
+      - name: Install Dependencies
+        run: flutter pub get
+        working-directory: ${{ env.working_directory }}
+
+      - name: Format
+        run: dart format $(find . -name "*.dart" -not -wholename "*/generated/*" -not -name "*.mocks.dart" -not -wholename "./.dart_tool/*") --set-exit-if-changed
+        working-directory: ${{ env.working_directory }}
+
+      - name: Analyze
+        run: flutter analyze
+        working-directory: ${{ env.working_directory }}
+
+      - name: Run tests
+        run: flutter test
+        working-directory: ${{ env.working_directory }}
+
+  release-android:
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+
+      - name: Install and update Bundler
+        run: |
+          gem install bundler
+          bundle update --bundler
+        working-directory: ${{ env.working_directory_android }}
+
+      - name: Install dependencies
+        run: bundle install
+        working-directory: ${{ env.working_directory_android }}
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          cache: true
+
+      # - name: Set up SSH key for Fastlane
+      #   uses: webfactory/ssh-agent@v0.9.0
+      #   with:
+      #     ssh-private-key: ${{ secrets.SCOOP_FASTLANE_SSH_KEY }}
+
+      # - name: Add SSH key to known hosts
+      #   run: ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Decrypt signing information
+        uses: ./.github/actions/decrypt-secrets
+        with:
+          encrypted_android_keystore: "${{ secrets.FASTLANE_KEYSTORE }}"
+          encrypted_android_key_properties: "${{ secrets.KEY_PROPERTIES }}"
+          encrypted_google_play_api_key: "${{ secrets.GOOGLE_PLAY_API_KEY }}"
+          # encrypted_apple_app_store_api_key: "${{ secrets.APP_STORE_CONNECT_API_KEY }}"
+          passphrase: "${{ secrets.GPG_PASSPHRASE }}"
+          secrets_path: "${{ env.working_directory }}/.secrets"
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('${{ env.working_directory }}/**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+
+      - name: Run Fastlane release script
+        # env:
+        #   MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+        working-directory: ${{ env.working_directory_android }}
+        run: bundle exec fastlane andoid deploy
