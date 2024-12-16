@@ -27,7 +27,7 @@ runs:
 
         # Decrypt the Keystore
         echo "${{inputs.encrypted_android_keystore}}" > "${{ inputs.secrets_path }}/fastlane_keystore.asc"
-        gpg -d --passphrase "${{inputs.passphrase}}" --batch "${{ inputs.secrets_path }}/fastlane_keystore.asc" > "${{ inputs.secrets_path }}/fastlane_keystore.jks"
+        gpg -d --passphrase "${{inputs.passphrase}}" --batch "${{ inputs.secrets_path }}/fastlane_keystore.asc" > "${{ inputs.secrets_path }}/fastlane-keystore.jks"
 
         # Decrypt the key.properties file (used in android/app/build.gradle)
         echo "${{inputs.encrypted_android_key_properties}}" > "${{ inputs.secrets_path }}/key.properties.asc"
