@@ -124,7 +124,7 @@ jobs:
         working-directory: ${{ env.working_directory_android }}
         run: bundle exec fastlane android deploy
 
-      # Push changes to pubspec.yaml if version was changed
+      # Push changes to pubspec.yaml if version was changed 
       - uses: actions/checkout@v4
       - name: Commit and push changes to pubspec.yaml
         working-directory: ${{ env.working_directory }}
