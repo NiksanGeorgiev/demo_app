@@ -127,7 +127,9 @@ jobs:
       # Commit changes to pubspec.yaml if version was changed
       - name: Commit changes
         working-directory: ${{ env.working_directory }}
-        run: ./.github/scripts/commit_pubspec_changes.sh
+        run: |
+          chmod +x .github/scripts/commit_and_push.sh
+          .github/scripts/commit_pubspec_changes.sh
 
       - name: Push changes
         uses: ad-m/github-push-action@master
