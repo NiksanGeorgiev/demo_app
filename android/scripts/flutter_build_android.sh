@@ -27,11 +27,14 @@ while [ "$1" != "" ]; do
     shift
 done
 
+# Ensure last_version_code is an integer
+last_version_code=$((last_version_code))
+
 # Change working directory to the project root 
 cd ../../
 
-# Make sure we work in a clean environment.
-flutter clean
+# # Make sure we work in a clean environment.
+# flutter clean
 
 # Get the current version from pubspec.yaml
 current_version=$(grep '^version:' pubspec.yaml | awk '{print $2}')
@@ -40,7 +43,7 @@ current_version=$(grep '^version:' pubspec.yaml | awk '{print $2}')
 current_version_code=$(echo $current_version | awk -F'+' '{print $2}')
  
 # Automatic version incrementation when version isn't changed manualy in pubspec.yaml
-if [ "$current_version_code" -eq "$last_version_code" ]; then
+if [ "$current_version_code" == "$last_version_code" ]; then
     # Increment the version code of the last released bundle
     new_version_code=$((last_version_code + 1))
 
@@ -54,5 +57,5 @@ if [ "$current_version_code" -eq "$last_version_code" ]; then
     sed -i "s/^version: .*/version: $new_version/" pubspec.yaml
 fi
 
-# Build the Flutter application.
-flutter build appbundle --release
+# # Build the Flutter application.
+# flutter build appbundle --release

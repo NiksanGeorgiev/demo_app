@@ -41,22 +41,22 @@ platform :android do
     config_file = values.fetch(:config, 'settings.prod');
     configuration = parse_config_file(config_file)
 
-    last_version_code = google_play_track_version_codes(
+    version_codes = google_play_track_version_codes(
       track:"internal", # Remark: Change track if needed
       package_name:configuration['APP_ID'],
       json_key: "../.secrets/google_play_api_key.json",
       )
 
     # Use a custom script to build the Flutter Android application.
-    sh("bash", "../scripts/flutter_build_android.sh", "--last-version", last_version_code)
+    sh("bash", "../scripts/flutter_build_android.sh", "--last-version", version_codes.last.to_s)
     
-    upload_to_play_store(
-      aab: "../build/app/outputs/bundle/release/app-release.aab",
-      json_key: "../.secrets/google_play_api_key.json",
-      package_name: configuration['APP_ID'], 
-      track: "internal",
-      release_status: "draft"
-      )
+    # upload_to_play_store(
+    #   aab: "../build/app/outputs/bundle/release/app-release.aab",
+    #   json_key: "../.secrets/google_play_api_key.json",
+    #   package_name: configuration['APP_ID'], 
+    #   track: "internal",
+    #   release_status: "draft"
+    #   )
 
   end
 end
