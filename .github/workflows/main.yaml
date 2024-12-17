@@ -119,10 +119,8 @@ jobs:
             ${{ runner.os }}-pub-
 
       - name: Run Fastlane release script
-        # env:
-        #   MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
         working-directory: ${{ env.working_directory_android }}
-        run: bundle exec fastlane android deploy
+        run: bundle exec fastlane beta config:'settings.prod'
 
       # Commit changes to pubspec.yaml if version was changed
       - name: Commit changes

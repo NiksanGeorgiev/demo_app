@@ -14,7 +14,7 @@ current_version=$(grep '^version:' pubspec.yaml | awk '{print $2}')
 
 # Get the previous version from the last commit
 previous_version=$(git show HEAD~1:pubspec.yaml | grep '^version:' | awk '{print $2}')
-
+ 
 # Automatic version incrementation when version isn't changed manualy in pubspec.yaml
 if [ "$current_version" == "$previous_version" ]; then
     # Extract the version code (the part after the '+')

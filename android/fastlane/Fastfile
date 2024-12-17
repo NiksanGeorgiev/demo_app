@@ -2,7 +2,27 @@ default_platform(:android)
 
 platform :android do
   desc "Deploy a new version to the Google Play Store"
-  lane :deploy do
+
+  def parseConfigFile(fileName)
+    config = Hash.new
+    File.open("../../#{fileName}", "r") do |file_handle|
+      IO.foreach(file_handle).with_object({}) do |line|
+        next if line.to_s.empty?
+        next if line.start_with?('#')
+
+        key, value = line.split('=').map(&:strip)
+        config[key] = value
+      end
+    end  
+
+    return config
+  end
+
+  lane :beta do |values|
+    # Get the contents of the `config` argument. If the argument is not specified fallback to the
+    # `settings.prod` configuration file.
+    configFile = values.fetch(:config, 'settings.prod');
+    configuration = parseConfigFile(configFile)
 
     # Use a custom script to build the Flutter Android application.
     sh("bash", "../scripts/flutter_build_android.sh")
@@ -10,7 +30,7 @@ platform :android do
     upload_to_play_store(
       aab: "../build/app/outputs/bundle/release/app-release.aab",
       json_key: "../.secrets/google_play_api_key.json",
-      package_name: "com.baseflow.demo_app.fastlane_test",
+      package_name: configuration['APP_ID'], 
       track: "internal",
       release_status: "draft"
       )

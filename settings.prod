@@ -1,0 +1,20 @@
+# --- Development environment configuration ---
+# Make changes to this file to configure the development environment.
+#
+# This file is currently added to source control be carefull when adding
+# sensitive information such as secrets or passwords.
+#
+# Sensitive information can also be provided via the `--dart-define` CLI
+# arguments. 
+
+# The environment in which the application will run, possible options are:
+# - development
+# - staging
+# - production
+ENVIRONMENT=production
+
+# Title of the app as it will be displayed on the home screen
+SCOOP_APPLICATION_NAME=[DEV] Demo_app
+
+# Unique identifier for the app
+SCOOP_BUNDLE_IDENTIFIER=com.baseflow.demo_app.fastlane_test
