@@ -41,9 +41,8 @@ platform :android do
     config_file = values.fetch(:config, 'settings.prod');
     configuration = parse_config_file(config_file)
 
-    # Remark: Change track if needed
     last_version_code = google_play_track_version_codes(
-      rack:"internal",
+      track:"internal", # Remark: Change track if needed
       package_name:configuration['APP_ID'],
       json_key: "../.secrets/google_play_api_key.json",
       )

@@ -7,7 +7,7 @@ set -e
 usage()
 {
     echo ""
-    echo "Usage: $0 -l 20"
+    echo "Usage: $0 --last-version 20"
     echo "  -l | --last-version             A number representing the version code of the last release on a given track."
     echo "  -h | --help                     Shows this help text."
 }
@@ -36,11 +36,11 @@ flutter clean
 # Get the current version from pubspec.yaml
 current_version=$(grep '^version:' pubspec.yaml | awk '{print $2}')
 
-# Get the previous version from the last commit
-previous_version=$(git show HEAD~1:pubspec.yaml | grep '^version:' | awk '{print $2}')
+# Extract the version code (the part after the '+')
+current_version_code=$(echo $current_version | awk -F'+' '{print $2}')
  
 # Automatic version incrementation when version isn't changed manualy in pubspec.yaml
-if [ "$current_version" == "$previous_version" ]; then
+if [ "$current_version_code" -eq "$last_version_code" ]; then
     # Increment the version code of the last released bundle
     new_version_code=$((last_version_code + 1))
 
