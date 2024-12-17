@@ -3,9 +3,9 @@ default_platform(:android)
 platform :android do
   desc "Deploy a new version to the Google Play Store"
 
-  def parseConfigFile(fileName)
+  def parse_config_file(file_name)
     config = Hash.new
-    File.open("../../#{fileName}", "r") do |file_handle|
+    File.open("../../#{file_name}", "r") do |file_handle|
       IO.foreach(file_handle).with_object({}) do |line|
         next if line.to_s.empty?
         next if line.start_with?('#')
@@ -18,14 +18,38 @@ platform :android do
     return config
   end
 
+  # Build and upload a beta version to the 'internal test' track of the Google
+  # Play Store.
+  #
+  # This lane takes an `environment` parameter which is used to determine which
+  # compile time configuration file should be used when building the Flutter 
+  # application. Valid values are:
+  # - dev, development: create a development version of the Flutter app.
+  # - stg, stag, staging: create a staging version of the Flutter app.
+  #
+  # If no parameter is supplied a production version of the Flutter
+  # application is build and uploaded to the internal test track of the Google
+  # Play Store.
+  #
+  # Usage:
+  # ```
+  # bundle exec fastlane beta config:settings.prod
+  # ```
   lane :beta do |values|
     # Get the contents of the `config` argument. If the argument is not specified fallback to the
     # `settings.prod` configuration file.
-    configFile = values.fetch(:config, 'settings.prod');
-    configuration = parseConfigFile(configFile)
+    config_file = values.fetch(:config, 'settings.prod');
+    configuration = parse_config_file(config_file)
+
+    # Remark: Change track if needed
+    last_version_code = google_play_track_version_codes(
+      rack:"internal",
+      package_name:configuration['APP_ID'],
+      json_key: "../.secrets/google_play_api_key.json",
+      )
 
     # Use a custom script to build the Flutter Android application.
-    sh("bash", "../scripts/flutter_build_android.sh")
+    sh("bash", "../scripts/flutter_build_android.sh", "--last-version", last_version_code)
     
     upload_to_play_store(
       aab: "../build/app/outputs/bundle/release/app-release.aab",
