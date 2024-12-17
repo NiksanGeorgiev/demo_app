@@ -14,7 +14,7 @@
 ENVIRONMENT=production
 
 # Title of the app as it will be displayed on the home screen
-SCOOP_APPLICATION_NAME=[DEV] Demo_app
+APP_TITLE=[DEV] Demo_app
 
 # Unique identifier for the app
-SCOOP_BUNDLE_IDENTIFIER=com.baseflow.demo_app.fastlane_test
+APP_ID=com.baseflow.demo_app.fastlane_test
