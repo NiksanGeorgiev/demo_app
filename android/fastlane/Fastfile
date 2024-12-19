@@ -48,15 +48,15 @@ platform :android do
       )
 
     # Use a custom script to build the Flutter Android application.
-    sh("bash", "../scripts/flutter_build_android.sh", "--last-version", version_codes.last.to_s)
+    sh("bash", "../scripts/flutter_build_android.sh", "-c", configFile, "--last-version", version_codes.last.to_s)
     
-    # upload_to_play_store(
-    #   aab: "../build/app/outputs/bundle/release/app-release.aab",
-    #   json_key: "../.secrets/google_play_api_key.json",
-    #   package_name: configuration['APP_ID'], 
-    #   track: "internal",
-    #   release_status: "draft"
-    #   )
+    upload_to_play_store(
+      aab: "../build/app/outputs/bundle/release/app-release.aab",
+      json_key: "../.secrets/google_play_api_key.json",
+      package_name: configuration['APP_ID'], 
+      track: "internal",
+      release_status: "draft"
+      )
 
   end
 end

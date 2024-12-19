@@ -7,7 +7,8 @@ set -e
 usage()
 {
     echo ""
-    echo "Usage: $0 --last-version 20"
+    echo "Usage: $0 -c settings.prod --last-version 20"
+    echo "  -c | --config-file              File containing the Flutter compile time configuration settings."
     echo "  -l | --last-version             A number representing the version code of the last release on a given track."
     echo "  -h | --help                     Shows this help text."
 }
@@ -15,6 +16,9 @@ usage()
 # Parse arguments
 while [ "$1" != "" ]; do
     case $1 in
+        -c | --config-file)             shift
+                                        CONFIG_FILE=$1
+                                        ;;
         -l | --last-version )           shift
                                         last_version_code=$1
                                         ;;
@@ -33,8 +37,8 @@ last_version_code=$((last_version_code))
 # Change working directory to the project root 
 cd ../../
 
-# # Make sure we work in a clean environment.
-# flutter clean
+# Make sure we work in a clean environment.
+flutter clean
 
 # Get the current version from pubspec.yaml
 current_version=$(grep '^version:' pubspec.yaml | awk '{print $2}')
@@ -57,5 +61,5 @@ if [ "$current_version_code" == "$last_version_code" ]; then
     sed -i "s/^version: .*/version: $new_version/" pubspec.yaml
 fi
 
-# # Build the Flutter application.
-# flutter build appbundle --release
+# Build the Flutter application.
+flutter build appbundle --release --dart-define-from-file=$CONFIG_FILE
