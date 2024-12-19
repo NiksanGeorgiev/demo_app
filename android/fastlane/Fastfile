@@ -48,7 +48,7 @@ platform :android do
       )
 
     # Use a custom script to build the Flutter Android application.
-    sh("bash", "../scripts/flutter_build_android.sh", "-c", configFile, "--last-version", version_codes.last.to_s)
+    sh("bash", "../scripts/flutter_build_android.sh", "-c", config_file, "--last-version", version_codes.last.to_s)
     
     upload_to_play_store(
       aab: "../build/app/outputs/bundle/release/app-release.aab",
